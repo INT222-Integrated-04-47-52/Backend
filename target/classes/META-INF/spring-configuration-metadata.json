@@ -1,0 +1,17 @@
+{
+  "groups": [
+    {
+      "name": "mongkolthorn.storage",
+      "type": "sit.int222.mongkolthorn.services.StorageProperties",
+      "sourceType": "sit.int222.mongkolthorn.services.StorageProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "mongkolthorn.storage.location",
+      "type": "java.lang.String",
+      "sourceType": "sit.int222.mongkolthorn.services.StorageProperties"
+    }
+  ],
+  "hints": []
+}
