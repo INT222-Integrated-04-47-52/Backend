@@ -8,7 +8,8 @@ import java.util.List;
 public class Product {
   @Id
   private long productId;
-  private String pname;
+  @Column(name= "pname")
+  private String name;
   private String image;
   private String description;
   @ManyToOne
@@ -26,9 +27,9 @@ public class Product {
   public Product() {
   }
 
-  public Product(long productId, String pname, String image, String description, Kind kind, Gender gender, Type type) {
+  public Product(long productId, String name, String image, String description, Kind kind, Gender gender, Type type) {
     this.productId = productId;
-    this.pname = pname;
+    this.name = name;
     this.image = image;
     this.description = description;
     this.kind = kind;
@@ -44,12 +45,12 @@ public class Product {
     this.productId = productId;
   }
 
-  public String getPname() {
-    return pname;
+  public String getName() {
+    return name;
   }
 
-  public void setPname(String pname) {
-    this.pname = pname;
+  public void setName(String name) {
+    this.name = name;
   }
 
   public String getImage() {

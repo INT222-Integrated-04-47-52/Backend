@@ -36,11 +36,11 @@ public class ProductController {
     @PostMapping("/addProduct")
     public Product addProduct(@RequestPart Product newProduct) {
         Product newProductId = productRepository.findById(newProduct.getProductId()).orElse(null);
-        Product newProductName = productRepository.findByName(newProduct.getPname());
+        Product newProductName = productRepository.findByName(newProduct.getName());
         if (newProductId != null && newProductName != null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_ALREADY_EXIST,
                     "Can't add. Product id: " + newProductId.getProductId()
-                            + " Product name: " + newProductName.getPname()
+                            + " Product name: " + newProductName.getName()
                             + " already exist.");
         } else if (newProductId != null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_ID_ALREADY_EXIST,
@@ -48,10 +48,10 @@ public class ProductController {
                             + " already exist.");
         } else if (newProductName != null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_NAME_ALREADY_EXIST,
-                    "Can't add. Product name: " + newProductName.getPname()
+                    "Can't add. Product name: " + newProductName.getName()
                             + " already exist.");
         }
-        Product productNoColor = new Product(newProduct.getProductId(),newProduct.getPname(),newProduct.getImage()
+        Product productNoColor = new Product(newProduct.getProductId(),newProduct.getName(),newProduct.getImage()
                 ,newProduct.getDescription(),newProduct.getKind(),newProduct.getGender(),newProduct.getType());
         productRepository.save(productNoColor);
         List<ProductHasColors> productHasColorses = newProduct.getProductHasColors();
@@ -66,11 +66,11 @@ public class ProductController {
     public Product addProductWithImage
             (@RequestParam(value = "image", required = false) MultipartFile imageFile, @RequestPart Product newProduct) {
         Product newProductId = productRepository.findById(newProduct.getProductId()).orElse(null);
-        Product newProductName = productRepository.findByName(newProduct.getPname());
+        Product newProductName = productRepository.findByName(newProduct.getName());
         if (newProductId != null && newProductName != null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_ALREADY_EXIST,
                     "Can't add. Product id: " + newProductId.getProductId()
-                            + " Product name: " + newProductName.getPname()
+                            + " Product name: " + newProductName.getName()
                             + " already exist.");
         } else if (newProductId != null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_ID_ALREADY_EXIST,
@@ -78,13 +78,13 @@ public class ProductController {
                             + " already exist.");
         } else if (newProductName != null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_NAME_ALREADY_EXIST,
-                    "Can't add. Product name: " + newProductName.getPname()
+                    "Can't add. Product name: " + newProductName.getName()
                             + " already exist.");
         } else if (imageFile == null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_IMAGE_NULL,
                     "Can't add. Product id: " + newProduct.getProductId());
         } else newProduct.setImage(storageService.store(imageFile, newProduct.getProductId()));
-        Product productNoColor = new Product(newProduct.getProductId(),newProduct.getPname(),newProduct.getImage()
+        Product productNoColor = new Product(newProduct.getProductId(),newProduct.getName(),newProduct.getImage()
                 ,newProduct.getDescription(),newProduct.getKind(),newProduct.getGender(),newProduct.getType());
         productRepository.save(productNoColor);
         List<ProductHasColors> productHasColorses = newProduct.getProductHasColors();
