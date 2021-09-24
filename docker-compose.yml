@@ -1,0 +1,17 @@
+version: "3"
+services:
+  backend:
+    container_name: backend_con
+    build: .
+    image: backend
+    environment:
+      - MYSQL_DATABASE=Mongkolthorn
+      - MYSQL_USER=root
+      - MYSQL_ROOT_PASSWORD=MKtorn044752
+    volumes:
+      - ~/backend_data/product-images:/public/product-images
+
+networks:
+  default:
+    external:
+      name: network
