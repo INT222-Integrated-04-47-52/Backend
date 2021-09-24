@@ -9,13 +9,13 @@ import javax.persistence.*;
 public class ProductHasColors {
   @Id
   private long hasColorsId;
+  @ManyToOne
+  @JoinColumn(name = "color_id")
+  private Colors colors;
   @JsonBackReference
   @ManyToOne
   @JoinColumn(name = "product_id")
   private Product product;
-  @ManyToOne
-  @JoinColumn(name = "color_id")
-  private Colors colors;
 
 
   public long getHasColorsId() {
