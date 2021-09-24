@@ -28,6 +28,11 @@ public class ProductController {
         return productRepository.findAll();
     }
 
+    @GetMapping("/max-productId")
+    public long maxIcecreamId() {
+        return productRepository.getMaxProductId();
+    }
+
     @PostMapping("/addProduct")
     public Product addProduct(@RequestPart Product newProduct) {
         Product newProductId = productRepository.findById(newProduct.getProductId()).orElse(null);
@@ -89,6 +94,7 @@ public class ProductController {
         }
         return productRepository.save(newProduct);
     }
+
 
 
 }
