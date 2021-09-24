@@ -6,7 +6,7 @@ pipeline {
          stage('stop and remove container, image') {
             steps {
                 script {
-                    def imageExists = sh(script: 'docker images -q frontend', returnStdout: true) == ""
+                    def imageExists = sh(script: 'docker images -q backend', returnStdout: true) == ""
                     println imageExists
 
                     if( !imageExists ){
