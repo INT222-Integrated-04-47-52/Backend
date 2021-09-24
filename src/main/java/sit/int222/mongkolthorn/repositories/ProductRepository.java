@@ -10,4 +10,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(value = "SELECT max(productId) FROM Product")
     Long getMaxProductId();
+
 }

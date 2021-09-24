@@ -17,4 +17,9 @@ public class ProductHasColorsController {
     public List<ProductHasColors> productHasColorsRepository(){
         return productHasColorsRepository.findAll();
     }
+
+    @GetMapping("/max-productHasColorsId")
+    public long maxIcecreamId() {
+        return productHasColorsRepository.getMaxProductHasColorsId();
+    }
 }
