@@ -95,6 +95,18 @@ public class ProductController {
         return productRepository.save(newProduct);
     }
 
-
+    @DeleteMapping("/delete/{product_id}")
+    public void delete(@PathVariable Long product_id) {
+        Product product = productRepository.findById(product_id).orElse(null);
+        if (product == null) {
+            throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_DOES_NOT_EXIST,
+                    "Can't delete. Product id: " + product_id + " does not exist.");
+        } else storageService.delete(product.getImage());
+        List<ProductHasColors> listProductHasColor = product.getProductHasColors();
+        for (ProductHasColors productHasColors : listProductHasColor) {
+            productHasColorsRepository.deleteById(productHasColors.getHasColorsId());
+        }
+        productRepository.deleteById(product_id);
+    }
 
 }
