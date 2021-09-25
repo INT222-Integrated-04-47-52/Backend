@@ -38,7 +38,7 @@ public class ImageStorageService implements StorageService{
 
     @Override
     public String store(MultipartFile image, Long productId) {
-        String imagename = "thai silk (" + productId.toString()+ ").jpg";
+        String imagename = "thai-silk-" + productId.toString() + ".jpg";
         try {
             if (image.isEmpty()) {
                 throw new StorageException("Failed to store empty file " + imagename);
