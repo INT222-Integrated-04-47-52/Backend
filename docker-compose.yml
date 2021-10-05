@@ -11,7 +11,7 @@ services:
       - MYSQL_USER=root
       - MYSQL_ROOT_PASSWORD=MKtorn044752
     volumes:
-      - /home/MKT/backend_data:/public/product-images
+      - /home/MKT/product-images:/public/product-images
 
 networks:
   default:
