@@ -29,7 +29,7 @@ public class ProductController {
     }
 
     @GetMapping("/max-productId")
-    public long maxIcecreamId() {
+    public long maxProductId() {
         return productRepository.getMaxProductId();
     }
 
@@ -96,7 +96,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/delete/{product_id}")
-    public void delete(@PathVariable Long product_id) {
+    public void deleteProduct(@PathVariable Long product_id) {
         Product product = productRepository.findById(product_id).orElse(null);
         if (product == null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_DOES_NOT_EXIST,
@@ -107,6 +107,29 @@ public class ProductController {
             productHasColorsRepository.deleteById(productHasColors.getHasColorsId());
         }
         productRepository.deleteById(product_id);
+    }
+
+    @PutMapping("/editProduct")
+    public Product editProduct(@RequestPart Product editProduct) {
+        Product productId = productRepository.findById(editProduct.getProductId()).orElse(null);
+        Product productName = productRepository.findByName(editProduct.getName());
+        if (productId == null) {
+            throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_DOES_NOT_EXIST,
+                    "Can't edit. Product id: " + editProduct.getProductId() + " does not exist.");
+        } else if (productName != null && productId.getProductId() != productName.getProductId()) {
+            throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_NAME_ALREADY_EXIST,
+                    "Can't edit. Product name: " + editProduct.getName() + " already exist.");
+        }
+        List<ProductHasColors> beforeEditProduct = productId.getProductHasColors();
+        for (ProductHasColors productHasColors : beforeEditProduct) {
+            productHasColorsRepository.deleteById(productHasColors.getHasColorsId());
+        }
+        List<ProductHasColors> productHasColors = editProduct.getProductHasColors();
+        for (ProductHasColors newProductHasColors : productHasColors) {
+            newProductHasColors.setProduct(editProduct);
+            productHasColorsRepository.save(newProductHasColors);
+        }
+        return productRepository.save(editProduct);
     }
 
 }
