@@ -55,6 +55,7 @@ public class ImageController {
 
     @GetMapping(value = "/image/{imageName}", produces = MediaType.IMAGE_PNG_VALUE)
     public Resource showImage(@PathVariable String imageName) {
+        //add exception
         return storageService.loadAsResource(imageName);
     }
 }
