@@ -1,18 +1,21 @@
 package sit.int222.mongkolthorn.models;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "login")
 public class Login {
   @Id
   private long loginId;
+  @Column(name= "log_email")
   private String logEmail;
+  @Column(name= "log_password")
   private String logPassword;
+  @Column(name= "log_position")
   private String logPosition;
-  private long accountId;
+  @OneToOne
+  @JoinColumn(name = "account_id")
+  private Account accountId;
 
 
   public long getLoginId() {
@@ -51,12 +54,11 @@ public class Login {
   }
 
 
-  public long getAccountId() {
+  public Account getAccountId() {
     return accountId;
   }
 
-  public void setAccountId(long accountId) {
+  public void setAccountId(Account accountId) {
     this.accountId = accountId;
   }
-
 }
