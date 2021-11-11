@@ -33,6 +33,15 @@ public class ProductController {
         return productRepository.getMaxProductId();
     }
 
+    @GetMapping("/product/{product_id}")
+    public Product showProductId(@PathVariable Long product_id) {
+        Product product = productRepository.findById(product_id).orElse(null);
+        if (product == null) {
+            throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_DOES_NOT_EXIST,
+                    "Product id: " + product_id + " does not exist.");
+        } else return productRepository.getOne(product_id);
+    }
+
     @PostMapping("/addProduct")
     public Product addProduct(@RequestPart Product newProduct) {
         Product newProductId = productRepository.findById(newProduct.getProductId()).orElse(null);
@@ -132,4 +141,34 @@ public class ProductController {
         return productRepository.save(editProduct);
     }
 
+    @PutMapping("/editProduct/image")
+    public Product editProductWithImage(@RequestParam(value = "image", required = false) MultipartFile imageFile, @RequestPart Product editProduct) {
+        Product productId = productRepository.findById(editProduct.getProductId()).orElse(null);
+        Product productName = productRepository.findByName(editProduct.getName());
+        if (productId == null) {
+            throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_DOES_NOT_EXIST,
+                    "Can't edit. Product id: " + editProduct.getProductId() + " does not exist.");
+        } else if (productName != null && editProduct.getProductId() != productName.getProductId()) {
+            throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_NAME_ALREADY_EXIST,
+                    "Can't edit. Product name: " + editProduct.getName() + " already exist.");
+        } else if (imageFile == null) {
+            throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_IMAGE_NULL,
+                    "Can't add. Product id: " + editProduct.getProductId() + " is no image.");
+        }
+        storageService.delete(productId.getImage());
+        editProduct.setImage(storageService.store(imageFile, editProduct.getProductId()));
+        List<ProductHasColors> beforeEditProduct = productId.getProductHasColors();
+        for (ProductHasColors productHasColors : beforeEditProduct) {
+            productHasColorsRepository.deleteById(productHasColors.getHasColorsId());
+        }
+        Product productNoColor = new Product(editProduct.getProductId(),editProduct.getName(),editProduct.getImage()
+                ,editProduct.getDescription(),editProduct.getKind(),editProduct.getGender(),editProduct.getType());
+        productRepository.save(productNoColor);
+        List<ProductHasColors> productHasColors = editProduct.getProductHasColors();
+        for (ProductHasColors newProductHasColors : productHasColors) {
+            newProductHasColors.setProduct(editProduct);
+            productHasColorsRepository.save(newProductHasColors);
+        }
+        return productRepository.save(editProduct);
+    }
 }
