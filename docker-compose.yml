@@ -20,3 +20,5 @@ networks:
   default:
     external:
       name: network
+  network:
+    external: true
