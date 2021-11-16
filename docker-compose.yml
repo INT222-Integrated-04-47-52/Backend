@@ -12,6 +12,9 @@ services:
       - MYSQL_ROOT_PASSWORD=MKtorn044752
     volumes:
       - /home/MKT/product-images:/public/product-images
+    networks:
+      network:
+        ipv4_address: 172.27.0.4
 
 networks:
   default:
