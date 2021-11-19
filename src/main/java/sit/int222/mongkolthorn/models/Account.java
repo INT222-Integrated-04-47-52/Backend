@@ -1,8 +1,6 @@
 package sit.int222.mongkolthorn.models;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "account")
@@ -14,7 +12,6 @@ public class Account {
   private String phone;
   private String email;
   private String password;
-
 
   public long getAccountId() {
     return accountId;
