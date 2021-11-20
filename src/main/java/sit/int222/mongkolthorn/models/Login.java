@@ -13,10 +13,27 @@ public class Login {
   private String logPassword;
   @Column(name= "log_position")
   private String logPosition;
-  @OneToOne
+  @OneToOne(cascade = CascadeType.ALL, optional = false)
   @JoinColumn(name = "account_id")
-  private Account accountId;
+  private Account account;
 
+  public Login() {
+  }
+
+  public Login(long loginId, String logEmail, String logPassword, String logPosition) {
+    this.loginId = loginId;
+    this.logEmail = logEmail;
+    this.logPassword = logPassword;
+    this.logPosition = logPosition;
+  }
+
+  public Login(long loginId, String logEmail, String logPassword, String logPosition, Account account) {
+    this.loginId = loginId;
+    this.logEmail = logEmail;
+    this.logPassword = logPassword;
+    this.logPosition = logPosition;
+    this.account = account;
+  }
 
   public long getLoginId() {
     return loginId;
@@ -53,12 +70,11 @@ public class Login {
     this.logPosition = logPosition;
   }
 
-
-  public Account getAccountId() {
-    return accountId;
+  public Account getAccount() {
+    return account;
   }
 
-  public void setAccountId(Account accountId) {
-    this.accountId = accountId;
+  public void setAccount(Account account) {
+    this.account = account;
   }
 }
