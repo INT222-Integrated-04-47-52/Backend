@@ -1,9 +1,14 @@
 package sit.int222.mongkolthorn.controllers;
 
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+import sit.int222.mongkolthorn.exceptions.ApiRequestException;
 import sit.int222.mongkolthorn.exceptions.ExceptionResponse;
 import sit.int222.mongkolthorn.exceptions.ProductException;
 import sit.int222.mongkolthorn.models.Product;
@@ -12,6 +17,7 @@ import sit.int222.mongkolthorn.repositories.ProductHasColorsRepository;
 import sit.int222.mongkolthorn.repositories.ProductRepository;
 import sit.int222.mongkolthorn.services.StorageService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -170,5 +176,45 @@ public class ProductController {
             productHasColorsRepository.save(newProductHasColors);
         }
         return productRepository.save(editProduct);
+    }
+
+    @GetMapping("/search")
+    public List<Product> searchProduct(@Param("keyword") String keyword) {
+        if(keyword != null){
+            productRepository.findAllByKeyword(keyword);
+        } else if(productRepository.findAllByKeyword(keyword) == null){
+
+        }
+        return productRepository.findAll();
+    }
+
+    @GetMapping("/filter/kind")
+    public List<Product> filterProductByKind(@Param("kind") String kind) {
+        if(kind == null) {
+            throw new ApiRequestException("Product kind name is null");
+        } else if(productRepository.findAllByProductType(kind).isEmpty()){
+            throw new ApiRequestException("Product type: " + kind + " not found");
+        }
+        return productRepository.findAllByProductKind(kind);
+    }
+
+    @GetMapping("/filter/type")
+    public List<Product> filterProductByType(@Param("type") String type) {
+        if(type == null) {
+            throw new ApiRequestException("Product type name is null");
+        } else if(productRepository.findAllByProductType(type).isEmpty()){
+            throw new ApiRequestException("Product type: " + type + " not found");
+        }
+        return productRepository.findAllByProductType(type);
+    }
+
+    @GetMapping("/filter/gender")
+    public List<Product> filterProductByGender(@Param("gender") String gender) {
+        if(gender == null) {
+            throw new ApiRequestException("Product gender name is null");
+        } else if(productRepository.findAllByProductType(gender).isEmpty()){
+            throw new ApiRequestException("Product type: " + gender + " not found");
+        }
+        return productRepository.findAllByProductGender(gender);
     }
 }
