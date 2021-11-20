@@ -5,8 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import sit.int222.mongkolthorn.exceptions.ExceptionResponse;
 import sit.int222.mongkolthorn.exceptions.ProductException;
 import sit.int222.mongkolthorn.models.Account;
-import sit.int222.mongkolthorn.models.Product;
-import sit.int222.mongkolthorn.models.ProductHasColors;
 import sit.int222.mongkolthorn.repositories.AccountRepository;
 
 import java.util.List;
