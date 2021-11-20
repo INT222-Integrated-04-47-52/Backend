@@ -78,7 +78,7 @@ public class AccountController {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_ID_NOT_EXIST,
                     "Can't edit. Account id: " + editAccount.getAccountId() + " does not exist.");
         } else if (findEmail != null && findAccountId.getAccountId() != findEmail.getAccountId()) {
-            throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_NAME_ALREADY_EXIST,
+            throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_EMAIL_ALREADY_EXIST,
                     "Can't edit. Email: " + editAccount.getEmail() + " already exist.");
         } else if (editAccount.getFname() == null || editAccount.getLname() == null ||
                 editAccount.getPhone() == null || editAccount.getPassword() == null ||

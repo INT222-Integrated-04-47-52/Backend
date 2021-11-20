@@ -1,5 +1,7 @@
 package sit.int222.mongkolthorn.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 
 @Entity
@@ -12,6 +14,21 @@ public class Account {
   private String phone;
   private String email;
   private String password;
+  @JsonBackReference
+  @OneToOne(mappedBy = "account")
+  private Login login;
+
+  public Account() {
+  }
+
+  public Account(long accountId, String fname, String lname, String phone, String email, String password) {
+    this.accountId = accountId;
+    this.fname = fname;
+    this.lname = lname;
+    this.phone = phone;
+    this.email = email;
+    this.password = password;
+  }
 
   public long getAccountId() {
     return accountId;
@@ -66,4 +83,11 @@ public class Account {
     this.password = password;
   }
 
+  public Login getLogin() {
+    return login;
+  }
+
+  public void setLogin(Login login) {
+    this.login = login;
+  }
 }
