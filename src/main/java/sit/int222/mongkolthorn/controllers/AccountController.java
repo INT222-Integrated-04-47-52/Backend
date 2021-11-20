@@ -6,6 +6,7 @@ import sit.int222.mongkolthorn.exceptions.ExceptionResponse;
 import sit.int222.mongkolthorn.exceptions.ProductException;
 import sit.int222.mongkolthorn.models.Account;
 import sit.int222.mongkolthorn.models.Product;
+import sit.int222.mongkolthorn.models.ProductHasColors;
 import sit.int222.mongkolthorn.repositories.AccountRepository;
 
 import java.util.List;
@@ -50,18 +51,44 @@ public class AccountController {
         Account newEmail = accountRepository.findByEmail(newAccount.getEmail());
         if (newAccountId != null && newEmail != null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_ID_ALREADY_EXIST,
-                    "Can't add. Account id: " + newAccountId.getAccountId()
-                            + " Email: " + newEmail.getEmail()
+                    "Can't add. Account id: " + newAccount.getAccountId()
+                            + " Email: " + newAccount.getEmail()
                             + " already exist.");
         } else if (newAccountId != null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_ID_ALREADY_EXIST,
-                    "Can't add. Account id: " + newAccountId.getAccountId()
+                    "Can't add. Account id: " + newAccount.getAccountId()
                             + " already exist.");
         } else if (newEmail != null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_EMAIL_ALREADY_EXIST,
-                    "Can't add. Email: " + newEmail.getEmail()
+                    "Can't add. Email: " + newAccount.getEmail()
                             + " already exist.");
-        }
+        } else if (newAccount.getFname() == null || newAccount.getLname() == null ||
+                newAccount.getPhone() == null || newAccount.getPassword() == null ||
+                newAccount.getFname() == "" || newAccount.getLname() == "" ||
+                newAccount.getPhone() == "" || newAccount.getPassword() == "") {
+            throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_DETAIL_IS_NULL,
+                    "Can't add. Some account detail is null.");
+        } else
         return accountRepository.save(newAccount);
+    }
+
+    @PutMapping("/editAccount")
+    public Account editAccount(@RequestPart Account editAccount) {
+        Account findAccountId = accountRepository.findById(editAccount.getAccountId()).orElse(null);
+        Account findEmail = accountRepository.findByEmail(editAccount.getEmail());
+        if (findAccountId == null) {
+            throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_ID_NOT_EXIST,
+                    "Can't edit. Account id: " + editAccount.getAccountId() + " does not exist.");
+        } else if (findEmail != null && findAccountId.getAccountId() != findEmail.getAccountId()) {
+            throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_NAME_ALREADY_EXIST,
+                    "Can't edit. Email: " + editAccount.getEmail() + " already exist.");
+        } else if (editAccount.getFname() == null || editAccount.getLname() == null ||
+                editAccount.getPhone() == null || editAccount.getPassword() == null ||
+                editAccount.getFname() == "" || editAccount.getLname() == "" ||
+                editAccount.getPhone() == "" || editAccount.getPassword() == "") {
+            throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_DETAIL_IS_NULL,
+                    "Can't edit. Some account detail is null.");
+        } else
+        return accountRepository.save(editAccount);
     }
 }
