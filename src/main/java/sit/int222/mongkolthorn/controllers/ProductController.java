@@ -48,8 +48,8 @@ public class ProductController {
         Product newProductName = productRepository.findByName(newProduct.getName());
         if (newProductId != null && newProductName != null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_ALREADY_EXIST,
-                    "Can't add. Product id: " + newProductId.getProductId()
-                            + " Product name: " + newProductName.getName()
+                    "Can't add. Product id: " + newProduct.getProductId()
+                            + " Product name: " + newProduct.getName()
                             + " already exist.");
         } else if (newProductId != null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_ID_ALREADY_EXIST,
@@ -57,7 +57,7 @@ public class ProductController {
                             + " already exist.");
         } else if (newProductName != null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_NAME_ALREADY_EXIST,
-                    "Can't add. Product name: " + newProductName.getName()
+                    "Can't add. Product name: " + newProduct.getName()
                             + " already exist.");
         }
         Product productNoColor = new Product(newProduct.getProductId(),newProduct.getName(),newProduct.getImage()
@@ -78,16 +78,16 @@ public class ProductController {
         Product newProductName = productRepository.findByName(newProduct.getName());
         if (newProductId != null && newProductName != null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_ALREADY_EXIST,
-                    "Can't add. Product id: " + newProductId.getProductId()
-                            + " Product name: " + newProductName.getName()
+                    "Can't add. Product id: " + newProduct.getProductId()
+                            + " Product name: " + newProduct.getName()
                             + " already exist.");
         } else if (newProductId != null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_ID_ALREADY_EXIST,
-                    "Can't add. Product id: " + newProductId.getProductId()
+                    "Can't add. Product id: " + newProduct.getProductId()
                             + " already exist.");
         } else if (newProductName != null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_NAME_ALREADY_EXIST,
-                    "Can't add. Product name: " + newProductName.getName()
+                    "Can't add. Product name: " + newProduct.getName()
                             + " already exist.");
         } else if (imageFile == null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_IMAGE_NULL,
