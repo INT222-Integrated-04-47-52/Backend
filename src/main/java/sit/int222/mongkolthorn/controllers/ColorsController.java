@@ -14,7 +14,7 @@ public class ColorsController {
     @Autowired
     private ColorsRepository colorsRepository;
 
-    @GetMapping("/allColors")
+    @GetMapping("/admin/allColors")
     public List<Colors> colors() {
         return colorsRepository.findAll();
     }

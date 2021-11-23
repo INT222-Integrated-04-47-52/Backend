@@ -13,7 +13,7 @@ public class TypeController {
     @Autowired
     private TypeRepository typeRepository;
 
-    @GetMapping("/allTypes")
+    @GetMapping("/admin/allTypes")
     public List<Type> type() {
         return typeRepository.findAll();
     }

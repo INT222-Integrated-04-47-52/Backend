@@ -24,7 +24,7 @@ public class ImageController {
         this.storageService = storageService;
     }
 
-    @PostMapping("/upload")
+    @PostMapping("/admin/upload")
     public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile image) {
         String message;
         Random rand = new Random();
@@ -42,7 +42,7 @@ public class ImageController {
         }
     }
 
-    @GetMapping("/images")
+    @GetMapping("/admin/images")
     public List<ImageDetail> getListImages() {
         return storageService.loadAll().map(path -> {
             String imageName = path.getFileName().toString();
@@ -53,7 +53,7 @@ public class ImageController {
         }).collect(Collectors.toList());
     }
 
-    @GetMapping(value = "/image/{imageName}", produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "/admin/image/{imageName}", produces = MediaType.IMAGE_PNG_VALUE)
     public Resource showImage(@PathVariable String imageName) {
         //add exception
         return storageService.loadAsResource(imageName);

@@ -13,12 +13,12 @@ public class ProductHasColorsController {
     @Autowired
     private ProductHasColorsRepository productHasColorsRepository;
 
-    @GetMapping("/allProductHasColors")
+    @GetMapping("/admin/allProductHasColors")
     public List<ProductHasColors> productHasColorsRepository(){
         return productHasColorsRepository.findAll();
     }
 
-    @GetMapping("/max-productHasColorsId")
+    @GetMapping("/admin/max-productHasColorsId")
     public long maxIcecreamId() {
         return productHasColorsRepository.getMaxProductHasColorsId();
     }

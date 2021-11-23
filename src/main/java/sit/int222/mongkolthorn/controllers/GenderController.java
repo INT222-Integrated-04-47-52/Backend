@@ -13,7 +13,7 @@ public class GenderController {
     @Autowired
     private GenderRepository genderRepository;
 
-    @GetMapping("/allGenders")
+    @GetMapping("/admin/allGenders")
     public List<Gender> products(){
         return genderRepository.findAll();
     }

@@ -13,7 +13,7 @@ public class KindController {
     @Autowired
     private KindRepository kindRepository;
 
-    @GetMapping("/allKinds")
+    @GetMapping("/admin/allKinds")
     public List<Kind> kind() {
         return kindRepository.findAll();
     }

@@ -34,12 +34,12 @@ public class ProductController {
         return productRepository.findAll();
     }
 
-    @GetMapping("/max-productId")
+    @GetMapping("/admin/max-productId")
     public long maxProductId() {
         return productRepository.getMaxProductId();
     }
 
-    @GetMapping("/product/{product_id}")
+    @GetMapping("/admin/product/{product_id}")
     public Product showProductId(@PathVariable Long product_id) {
         Product product = productRepository.findById(product_id).orElse(null);
         if (product == null) {
@@ -48,7 +48,7 @@ public class ProductController {
         } else return productRepository.getOne(product_id);
     }
 
-    @PostMapping("/addProduct")
+    @PostMapping("/admin/addProduct")
     public Product addProduct(@RequestPart Product newProduct) {
         Product newProductId = productRepository.findById(newProduct.getProductId()).orElse(null);
         Product newProductName = productRepository.findByName(newProduct.getName());
@@ -77,7 +77,7 @@ public class ProductController {
         return productRepository.save(newProduct);
     }
 
-    @PostMapping(value = "/addProduct/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/admin/addProduct/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Product addProductWithImage
             (@RequestParam(value = "image", required = false) MultipartFile imageFile, @RequestPart Product newProduct) {
         Product newProductId = productRepository.findById(newProduct.getProductId()).orElse(null);
@@ -110,7 +110,7 @@ public class ProductController {
         return productRepository.save(newProduct);
     }
 
-    @DeleteMapping("/delete/{product_id}")
+    @DeleteMapping("/admin/delete/{product_id}")
     public void deleteProduct(@PathVariable Long product_id) {
         Product product = productRepository.findById(product_id).orElse(null);
         if (product == null) {
@@ -124,7 +124,7 @@ public class ProductController {
         productRepository.deleteById(product_id);
     }
 
-    @PutMapping("/editProduct")
+    @PutMapping("/admin/editProduct")
     public Product editProduct(@RequestPart Product editProduct) {
         Product productId = productRepository.findById(editProduct.getProductId()).orElse(null);
         Product productName = productRepository.findByName(editProduct.getName());
@@ -147,7 +147,7 @@ public class ProductController {
         return productRepository.save(editProduct);
     }
 
-    @PutMapping("/editProduct/image")
+    @PutMapping("/admin/editProduct/image")
     public Product editProductWithImage(@RequestParam(value = "image", required = false) MultipartFile imageFile, @RequestPart Product editProduct) {
         Product productId = productRepository.findById(editProduct.getProductId()).orElse(null);
         Product productName = productRepository.findByName(editProduct.getName());
