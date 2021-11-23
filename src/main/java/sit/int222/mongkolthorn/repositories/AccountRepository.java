@@ -8,7 +8,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query(value = "SELECT max(accountId) FROM Account")
     Long getMaxAccountId();
 
-
     Account findByEmail(String email);
 
 }
