@@ -3,6 +3,7 @@ package sit.int222.mongkolthorn.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import sit.int222.mongkolthorn.exceptions.ApiException;
 import sit.int222.mongkolthorn.exceptions.ApiRequestException;
 import sit.int222.mongkolthorn.exceptions.ExceptionResponse;
 import sit.int222.mongkolthorn.exceptions.ProductException;
@@ -33,13 +34,7 @@ public class AccountController {
         if(checkEmail == null){
             throw new ApiRequestException("Email: " + loginAccount.getEmail() + " not found");
         } else if(passwordEncoder.matches(loginAccount.getPassword(), checkEmail.getPassword())) {
-            System.out.println(checkEmail);
-            System.out.println(checkEmail.getRole());
-
             String token = tokenService.tokenize(checkEmail);
-
-            System.out.println(token);
-
             respone.put("account", checkEmail);
             respone.put("token", token);
 
@@ -124,15 +119,22 @@ public class AccountController {
         } else if (findEmail != null && findAccountId.getAccountId() != findEmail.getAccountId()) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_EMAIL_ALREADY_EXIST,
                     "Can't edit. Email: " + editAccount.getEmail() + " already exist.");
-        } else if (editAccount.getFname() == null || editAccount.getLname() == null ||
-                editAccount.getPhone() == null || editAccount.getPassword() == null ||
+        } else if (editAccount.getPassword() == null || editAccount.getPassword() == "") {
+//            throw new ApiRequestException("password null");
+            editAccount.setPassword(passwordEncoder.encode(findAccountId.getPassword()));
+        }
+        else if (editAccount.getFname() == null || editAccount.getLname() == null ||
+                editAccount.getPhone() == null ||
                 editAccount.getFname() == "" || editAccount.getLname() == "" ||
-                editAccount.getPhone() == "" || editAccount.getPassword() == "" ||
+                editAccount.getPhone() == "" ||
                 editAccount.getRole() == "" || editAccount.getRole() == null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_DETAIL_IS_NULL,
                     "Can't edit. Some account detail is null.");
-        } else
+        }
+        else
+            System.out.println(editAccount.getPassword());
             editAccount.setPassword(passwordEncoder.encode(editAccount.getPassword()));
+        System.out.println(editAccount.getPassword());
         return accountRepository.save(editAccount);
     }
 
@@ -140,20 +142,25 @@ public class AccountController {
     public Account userEditAccount(@RequestPart Account editAccount) {
         Account findAccountId = accountRepository.findById(editAccount.getAccountId()).orElse(null);
         Account findEmail = accountRepository.findByEmail(editAccount.getEmail());
+        String oldPassword = findAccountId.getPassword();
         if (findAccountId == null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_ID_NOT_EXIST,
                     "Can't edit. Account id: " + editAccount.getAccountId() + " does not exist.");
         } else if (findEmail != null && findAccountId.getAccountId() != findEmail.getAccountId()) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_EMAIL_ALREADY_EXIST,
                     "Can't edit. Email: " + editAccount.getEmail() + " already exist.");
-        } else if (editAccount.getFname() == null || editAccount.getLname() == null ||
-                editAccount.getPhone() == null || editAccount.getPassword() == null ||
+        } else if (editAccount.getPassword() == null || editAccount.getPassword() == "") {
+            editAccount.setPassword(oldPassword);
+        }
+        else if (editAccount.getFname() == null || editAccount.getLname() == null ||
+                editAccount.getPhone() == null ||
                 editAccount.getFname() == "" || editAccount.getLname() == "" ||
-                editAccount.getPhone() == "" || editAccount.getPassword() == "" ||
+                editAccount.getPhone() == "" ||
                 editAccount.getRole() == "" || editAccount.getRole() == null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_DETAIL_IS_NULL,
                     "Can't edit. Some account detail is null.");
         } else
-            return accountRepository.save(editAccount);
+            editAccount.setPassword(passwordEncoder.encode(editAccount.getPassword()));
+        return accountRepository.save(editAccount);
     }
 }
