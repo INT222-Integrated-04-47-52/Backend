@@ -14,20 +14,19 @@ public class Account {
   private String phone;
   private String email;
   private String password;
-  @JsonBackReference
-  @OneToOne(mappedBy = "account")
-  private Login login;
+  private String role;
 
   public Account() {
   }
 
-  public Account(long accountId, String fname, String lname, String phone, String email, String password) {
+  public Account(long accountId, String fname, String lname, String phone, String email, String password, String role) {
     this.accountId = accountId;
     this.fname = fname;
     this.lname = lname;
     this.phone = phone;
     this.email = email;
     this.password = password;
+    this.role = role;
   }
 
   public long getAccountId() {
@@ -83,11 +82,11 @@ public class Account {
     this.password = password;
   }
 
-  public Login getLogin() {
-    return login;
+  public String getRole() {
+    return role;
   }
 
-  public void setLogin(Login login) {
-    this.login = login;
+  public void setRole(String role) {
+    this.role = role;
   }
 }
