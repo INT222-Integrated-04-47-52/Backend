@@ -42,7 +42,7 @@ public class ImageController {
         }
     }
 
-    @GetMapping("/admin/images")
+    @GetMapping("/images")
     public List<ImageDetail> getListImages() {
         return storageService.loadAll().map(path -> {
             String imageName = path.getFileName().toString();
@@ -53,7 +53,7 @@ public class ImageController {
         }).collect(Collectors.toList());
     }
 
-    @GetMapping(value = "/admin/image/{imageName}", produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "/image/{imageName}", produces = MediaType.IMAGE_PNG_VALUE)
     public Resource showImage(@PathVariable String imageName) {
         //add exception
         return storageService.loadAsResource(imageName);
