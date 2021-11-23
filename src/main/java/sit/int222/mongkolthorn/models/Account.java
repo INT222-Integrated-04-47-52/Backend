@@ -1,6 +1,6 @@
 package sit.int222.mongkolthorn.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
@@ -13,6 +13,7 @@ public class Account {
   private String lname;
   private String phone;
   private String email;
+  @JsonIgnore
   private String password;
   private String role;
 
@@ -72,7 +73,6 @@ public class Account {
   public void setEmail(String email) {
     this.email = email;
   }
-
 
   public String getPassword() {
     return password;
