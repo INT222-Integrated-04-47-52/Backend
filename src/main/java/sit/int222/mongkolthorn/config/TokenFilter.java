@@ -45,7 +45,7 @@ public class TokenFilter extends GenericFilterBean {
             filterChain.doFilter(servletRequest,servletResponse);
             return;
         }
-        String principal = decodedJWT.getClaim("principal").asString();
+        Long principal = decodedJWT.getClaim("principal").asLong();
         String role = decodedJWT.getClaim("role").asString();
 
         List<GrantedAuthority> authorities = new ArrayList<>();
