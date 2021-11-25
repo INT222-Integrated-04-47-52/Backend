@@ -158,8 +158,9 @@ public class ProductController {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_NAME_ALREADY_EXIST,
                     "Can't edit. Product name: " + editProduct.getName() + " already exist.");
         } else if (imageFile == null) {
-            throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_IMAGE_NULL,
-                    "Can't add. Product id: " + editProduct.getProductId() + " is no image.");
+//            throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_IMAGE_NULL,
+//                    "Can't add. Product id: " + editProduct.getProductId() + " is no image.");
+            editProduct.setImage(storageService.store(imageFile, productId.getProductId()));
         }
         storageService.delete(productId.getImage());
         editProduct.setImage(storageService.store(imageFile, editProduct.getProductId()));
@@ -210,6 +211,7 @@ public class ProductController {
 
     @GetMapping("/filter/gender")
     public List<Product> filterProductByGender(@Param("gender") String gender) {
+        List<Product> x = productRepository.findAllByProductType(gender);
         if(gender == null) {
             throw new ApiRequestException("Product gender name is null");
         } else if(productRepository.findAllByProductType(gender).isEmpty()){

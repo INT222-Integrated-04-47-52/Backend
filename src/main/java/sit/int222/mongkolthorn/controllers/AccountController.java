@@ -1,20 +1,26 @@
 package sit.int222.mongkolthorn.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import sit.int222.mongkolthorn.config.TokenSecurityUtil;
 import sit.int222.mongkolthorn.exceptions.ApiException;
 import sit.int222.mongkolthorn.exceptions.ApiRequestException;
 import sit.int222.mongkolthorn.exceptions.ExceptionResponse;
 import sit.int222.mongkolthorn.exceptions.ProductException;
 import sit.int222.mongkolthorn.models.Account;
 import sit.int222.mongkolthorn.models.LoginAccount;
+import sit.int222.mongkolthorn.models.RequestAccount;
 import sit.int222.mongkolthorn.repositories.AccountRepository;
 import sit.int222.mongkolthorn.services.TokenService;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 public class AccountController {
@@ -33,14 +39,32 @@ public class AccountController {
         java.util.Map<String, Object> respone = new HashMap<>();
         if(checkEmail == null){
             throw new ApiRequestException("Email: " + loginAccount.getEmail() + " not found");
+        } else if(!passwordEncoder.matches(loginAccount.getPassword(), checkEmail.getPassword())) {
+            throw new ApiRequestException("Login password failed!");
         } else if(passwordEncoder.matches(loginAccount.getPassword(), checkEmail.getPassword())) {
             String token = tokenService.tokenize(checkEmail);
             respone.put("account", checkEmail);
             respone.put("token", token);
-
         }
         return respone;
     }
+
+    @GetMapping("/user/refresh-token")
+    public String refreshToken() {
+        Long currentAccountId = TokenSecurityUtil.getCurrentAccountId();
+        if (currentAccountId == null) {
+            throw new ApiRequestException("This account id is unauthorized");
+        }
+        Long accountId = currentAccountId;
+        Optional<Account> findAccountId = accountRepository.findById(Long.valueOf(accountId));
+        if (findAccountId.isEmpty()) {
+            throw new ApiRequestException("Account not found");
+        }
+        Account account = findAccountId.get();
+        String response = tokenService.tokenize(account);
+        return response;
+    }
+
 
     @GetMapping("/admin/allAccounts")
     public List<Account> account() {
@@ -63,11 +87,16 @@ public class AccountController {
 
     @GetMapping("/user/account/{account_id}")
     public Account userShowAccountId(@PathVariable Long account_id) {
+        Long authoAccountId = TokenSecurityUtil.getCurrentAccountId();
         Account account = accountRepository.findById(account_id).orElse(null);
-        if (account == null) {
+//        if (authoAccountId != account_id) {
+//            throw new ApiRequestException("This account id is unauthorized");
+//        } else
+            if (account == null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_ID_NOT_EXIST,
                     "Account id: " + account_id + " does not exist.");
-        } else return accountRepository.getOne(account_id);
+        } else
+            return accountRepository.getOne(authoAccountId);
     }
 
     @DeleteMapping("/admin/delete/account/{account_id}")
@@ -81,7 +110,17 @@ public class AccountController {
     }
 
     @PostMapping("/admin/addAccount")
-    public Account addAccount(@RequestPart Account newAccount) {
+    public Account addAccount(@RequestPart RequestAccount requestAccount) {
+
+        Account newAccount = new Account();
+        newAccount.setAccountId(requestAccount.getAccountId());
+        newAccount.setFname(requestAccount.getFname());
+        newAccount.setLname(requestAccount.getLname());
+        newAccount.setPhone(requestAccount.getPhone());
+        newAccount.setEmail(requestAccount.getEmail());
+        newAccount.setPassword(passwordEncoder.encode(requestAccount.getPassword()));
+        newAccount.setRole(requestAccount.getRole());
+
         Account newAccountId = accountRepository.findById(newAccount.getAccountId()).orElse(null);
         Account newEmail = accountRepository.findByEmail(newAccount.getEmail());
         if (newAccountId != null && newEmail != null) {
@@ -97,15 +136,9 @@ public class AccountController {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_EMAIL_ALREADY_EXIST,
                     "Can't add. Email: " + newAccount.getEmail()
                             + " already exist.");
-        } else if (newAccount.getFname() == null || newAccount.getLname() == null ||
-                newAccount.getPhone() == null || newAccount.getPassword() == null ||
-                newAccount.getFname() == "" || newAccount.getLname() == "" ||
-                newAccount.getPhone() == "" || newAccount.getPassword() == "" ||
-                newAccount.getRole() == "" || newAccount.getRole() == null) {
-            throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_DETAIL_IS_NULL,
-                    "Can't add. Some account detail is null.");
         } else
             newAccount.setPassword(passwordEncoder.encode(newAccount.getPassword()));
+
         return accountRepository.save(newAccount);
     }
 
@@ -113,6 +146,7 @@ public class AccountController {
     public Account editAccount(@RequestPart Account editAccount) {
         Account findAccountId = accountRepository.findById(editAccount.getAccountId()).orElse(null);
         Account findEmail = accountRepository.findByEmail(editAccount.getEmail());
+        String oldPassword = findAccountId.getPassword();
         if (findAccountId == null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_ID_NOT_EXIST,
                     "Can't edit. Account id: " + editAccount.getAccountId() + " does not exist.");
@@ -120,21 +154,9 @@ public class AccountController {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_EMAIL_ALREADY_EXIST,
                     "Can't edit. Email: " + editAccount.getEmail() + " already exist.");
         } else if (editAccount.getPassword() == null || editAccount.getPassword() == "") {
-//            throw new ApiRequestException("password null");
-            editAccount.setPassword(passwordEncoder.encode(findAccountId.getPassword()));
-        }
-        else if (editAccount.getFname() == null || editAccount.getLname() == null ||
-                editAccount.getPhone() == null ||
-                editAccount.getFname() == "" || editAccount.getLname() == "" ||
-                editAccount.getPhone() == "" ||
-                editAccount.getRole() == "" || editAccount.getRole() == null) {
-            throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_DETAIL_IS_NULL,
-                    "Can't edit. Some account detail is null.");
-        }
-        else
-            System.out.println(editAccount.getPassword());
+            editAccount.setPassword(oldPassword);
+        } else
             editAccount.setPassword(passwordEncoder.encode(editAccount.getPassword()));
-        System.out.println(editAccount.getPassword());
         return accountRepository.save(editAccount);
     }
 
@@ -151,14 +173,6 @@ public class AccountController {
                     "Can't edit. Email: " + editAccount.getEmail() + " already exist.");
         } else if (editAccount.getPassword() == null || editAccount.getPassword() == "") {
             editAccount.setPassword(oldPassword);
-        }
-        else if (editAccount.getFname() == null || editAccount.getLname() == null ||
-                editAccount.getPhone() == null ||
-                editAccount.getFname() == "" || editAccount.getLname() == "" ||
-                editAccount.getPhone() == "" ||
-                editAccount.getRole() == "" || editAccount.getRole() == null) {
-            throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_DETAIL_IS_NULL,
-                    "Can't edit. Some account detail is null.");
         } else
             editAccount.setPassword(passwordEncoder.encode(editAccount.getPassword()));
         return accountRepository.save(editAccount);
