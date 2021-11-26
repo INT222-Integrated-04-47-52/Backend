@@ -34,7 +34,7 @@ public class AccountController {
     private TokenService tokenService;
 
     @PostMapping("/login")
-    public Map<String, Object> Login (@RequestBody LoginAccount loginAccount) {
+    public Map<String, Object> Login (@RequestBody LoginAccount loginAccount) throws Exception {
         Account checkEmail = accountRepository.findByEmail(loginAccount.getEmail());
         java.util.Map<String, Object> respone = new HashMap<>();
         if(checkEmail == null){
@@ -45,6 +45,8 @@ public class AccountController {
             String token = tokenService.tokenize(checkEmail);
             respone.put("account", checkEmail);
             respone.put("token", token);
+        } else{
+            throw new Exception();
         }
         return respone;
     }
@@ -89,9 +91,9 @@ public class AccountController {
     public Account userShowAccountId(@PathVariable Long account_id) {
         Long authoAccountId = TokenSecurityUtil.getCurrentAccountId();
         Account account = accountRepository.findById(account_id).orElse(null);
-//        if (authoAccountId != account_id) {
-//            throw new ApiRequestException("This account id is unauthorized");
-//        } else
+        if (!authoAccountId.equals(account_id)) {
+            throw new ApiRequestException("This account id is unauthorized");
+        } else
             if (account == null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_ID_NOT_EXIST,
                     "Account id: " + account_id + " does not exist.");
@@ -137,13 +139,21 @@ public class AccountController {
                     "Can't add. Email: " + newAccount.getEmail()
                             + " already exist.");
         } else
-            newAccount.setPassword(passwordEncoder.encode(newAccount.getPassword()));
-
         return accountRepository.save(newAccount);
     }
 
     @PutMapping("/admin/editAccount")
-    public Account editAccount(@RequestPart Account editAccount) {
+    public Account editAccount(@RequestPart RequestAccount requestAccount) {
+
+        Account editAccount = new Account();
+        editAccount.setAccountId(requestAccount.getAccountId());
+        editAccount.setFname(requestAccount.getFname());
+        editAccount.setLname(requestAccount.getLname());
+        editAccount.setPhone(requestAccount.getPhone());
+        editAccount.setEmail(requestAccount.getEmail());
+        editAccount.setPassword(requestAccount.getPassword());
+        editAccount.setRole(requestAccount.getRole());
+
         Account findAccountId = accountRepository.findById(editAccount.getAccountId()).orElse(null);
         Account findEmail = accountRepository.findByEmail(editAccount.getEmail());
         String oldPassword = findAccountId.getPassword();
@@ -161,20 +171,34 @@ public class AccountController {
     }
 
     @PutMapping("/user/editAccount")
-    public Account userEditAccount(@RequestPart Account editAccount) {
+    public Account userEditAccount(@RequestPart RequestAccount requestAccount) {
+
+        Account editAccount = new Account();
+        editAccount.setAccountId(requestAccount.getAccountId());
+        editAccount.setFname(requestAccount.getFname());
+        editAccount.setLname(requestAccount.getLname());
+        editAccount.setPhone(requestAccount.getPhone());
+        editAccount.setEmail(requestAccount.getEmail());
+        editAccount.setPassword(requestAccount.getPassword());
+        editAccount.setRole(requestAccount.getRole());
+
         Account findAccountId = accountRepository.findById(editAccount.getAccountId()).orElse(null);
         Account findEmail = accountRepository.findByEmail(editAccount.getEmail());
-        String oldPassword = findAccountId.getPassword();
         if (findAccountId == null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_ID_NOT_EXIST,
                     "Can't edit. Account id: " + editAccount.getAccountId() + " does not exist.");
+        }
+        String oldPassword = findAccountId.getPassword();
+        Long authoAccountId = TokenSecurityUtil.getCurrentAccountId();
+        if (!authoAccountId.equals(editAccount.getAccountId())) {
+            throw new ApiRequestException("This account id is unauthorized");
         } else if (findEmail != null && findAccountId.getAccountId() != findEmail.getAccountId()) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_EMAIL_ALREADY_EXIST,
                     "Can't edit. Email: " + editAccount.getEmail() + " already exist.");
         } else if (editAccount.getPassword() == null || editAccount.getPassword() == "") {
             editAccount.setPassword(oldPassword);
         } else
-            editAccount.setPassword(passwordEncoder.encode(editAccount.getPassword()));
+            editAccount.setPassword(passwordEncoder.encode(requestAccount.getPassword()));
         return accountRepository.save(editAccount);
     }
 }
