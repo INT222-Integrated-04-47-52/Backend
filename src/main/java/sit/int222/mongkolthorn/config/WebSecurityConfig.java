@@ -62,7 +62,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/images","/image/{imageName}").permitAll()
-                .antMatchers("/max-closetId").permitAll()
+                .antMatchers("/max-closetId","/max-sizeId").permitAll()
                 .antMatchers("/allProducts","/search","/filter/**").permitAll()
                 .antMatchers("/admin/**").hasAuthority("ADMIN")
                 .antMatchers("/user/**").hasAuthority("USER")
