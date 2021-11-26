@@ -19,4 +19,9 @@ public class SizeController {
     public List<Size> size() {
         return sizeRepository.findAll();
     }
+
+    @GetMapping("/max-sizeId")
+    public Long maxSizeId(){
+    return sizeRepository.getMaxSizeId();
+    }
 }
