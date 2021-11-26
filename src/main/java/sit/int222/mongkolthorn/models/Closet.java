@@ -24,6 +24,18 @@ public class Closet {
   private List<Size> size;
   private java.sql.Date pickUpDate;
 
+  public Closet() {
+  }
+
+  public Closet(long closetId, Account account, Product product, Colors color, List<Size> size, Date pickUpDate) {
+    this.closetId = closetId;
+    this.account = account;
+    this.product = product;
+    this.color = color;
+    this.size = size;
+    this.pickUpDate = pickUpDate;
+  }
+
   public long getClosetId() {
     return closetId;
   }
