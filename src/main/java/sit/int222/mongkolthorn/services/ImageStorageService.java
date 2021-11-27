@@ -80,7 +80,7 @@ public class ImageStorageService implements StorageService{
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             } else {
-                throw new RuntimeException("FAIL!");
+                throw new RuntimeException("Image name dose not exist");
             }
         } catch (MalformedURLException e) {
             throw new RuntimeException("FAIL!");
