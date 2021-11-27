@@ -16,6 +16,16 @@ public class Size {
   @JoinColumn(name = "closet_id")
   private Closet closet;
 
+  public Size() {
+  }
+
+  public Size(long sizeId, String sizeName, double proportion, Closet closet) {
+    this.sizeId = sizeId;
+    this.sizeName = sizeName;
+    this.proportion = proportion;
+    this.closet = closet;
+  }
+
   public long getSizeId() {
     return sizeId;
   }
