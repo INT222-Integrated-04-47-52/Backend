@@ -1,5 +1,7 @@
 package sit.int222.mongkolthorn.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -23,6 +25,9 @@ public class Product {
   private Type type;
   @OneToMany(mappedBy = "product")
   private List<ProductHasColors> productHasColors;
+  @JsonBackReference
+  @OneToMany(mappedBy = "product")
+  private List<Closet> closet;
 
   public Product() {
   }
@@ -99,5 +104,13 @@ public class Product {
 
   public void setProductHasColors(List<ProductHasColors> productHasColors) {
     this.productHasColors = productHasColors;
+  }
+
+  public List<Closet> getCloset() {
+    return closet;
+  }
+
+  public void setCloset(List<Closet> closet) {
+    this.closet = closet;
   }
 }
