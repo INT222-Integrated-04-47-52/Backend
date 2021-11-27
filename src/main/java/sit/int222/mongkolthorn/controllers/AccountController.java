@@ -93,8 +93,7 @@ public class AccountController {
         Account account = accountRepository.findById(account_id).orElse(null);
         if (!authoAccountId.equals(account_id)) {
             throw new ApiRequestException("This account id is unauthorized");
-        } else
-            if (account == null) {
+        } else if (account == null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_ID_NOT_EXIST,
                     "Account id: " + account_id + " does not exist.");
         } else

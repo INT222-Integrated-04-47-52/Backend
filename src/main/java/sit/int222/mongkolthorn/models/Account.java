@@ -1,8 +1,10 @@
 package sit.int222.mongkolthorn.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "account")
@@ -16,6 +18,9 @@ public class Account {
   @JsonIgnore
   private String password;
   private String role;
+  @JsonBackReference
+  @OneToMany(mappedBy = "account")
+  private List<Closet> closetList;
 
   public Account() {
   }
@@ -88,5 +93,13 @@ public class Account {
 
   public void setRole(String role) {
     this.role = role;
+  }
+
+  public List<Closet> getClosetList() {
+    return closetList;
+  }
+
+  public void setClosetList(List<Closet> closetList) {
+    this.closetList = closetList;
   }
 }
