@@ -83,4 +83,6 @@ public class Closet {
   public void setSize(List<Size> size) {
     this.size = size;
   }
+
+
 }
