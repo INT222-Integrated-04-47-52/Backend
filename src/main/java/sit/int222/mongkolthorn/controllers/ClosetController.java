@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import sit.int222.mongkolthorn.config.TokenSecurityUtil;
 import sit.int222.mongkolthorn.exceptions.ApiRequestException;
+import sit.int222.mongkolthorn.exceptions.ApiRequestExceptionUnauthorized;
 import sit.int222.mongkolthorn.exceptions.ExceptionResponse;
 import sit.int222.mongkolthorn.exceptions.ProductException;
 import sit.int222.mongkolthorn.models.*;
@@ -58,7 +59,7 @@ public class ClosetController {
         Long authoAccountId = TokenSecurityUtil.getCurrentAccountId();
         Account account = accountRepository.findById(showAccount.getAccountId()).orElse(null);
         if (!authoAccountId.equals(showAccount.getAccountId())) {
-            throw new ApiRequestException("This account id is unauthorized");
+            throw new ApiRequestExceptionUnauthorized("This account id is unauthorized");
         } else if (account == null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_ID_NOT_EXIST,
                     "Account id: " + showAccount.getAccountId() + " does not exist.");

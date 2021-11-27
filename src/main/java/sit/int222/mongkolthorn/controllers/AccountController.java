@@ -7,10 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import sit.int222.mongkolthorn.config.TokenSecurityUtil;
-import sit.int222.mongkolthorn.exceptions.ApiException;
-import sit.int222.mongkolthorn.exceptions.ApiRequestException;
-import sit.int222.mongkolthorn.exceptions.ExceptionResponse;
-import sit.int222.mongkolthorn.exceptions.ProductException;
+import sit.int222.mongkolthorn.exceptions.*;
 import sit.int222.mongkolthorn.models.Account;
 import sit.int222.mongkolthorn.models.LoginAccount;
 import sit.int222.mongkolthorn.models.RequestAccount;
@@ -92,7 +89,7 @@ public class AccountController {
         Long authoAccountId = TokenSecurityUtil.getCurrentAccountId();
         Account account = accountRepository.findById(account_id).orElse(null);
         if (!authoAccountId.equals(account_id)) {
-            throw new ApiRequestException("This account id is unauthorized");
+            throw new ApiRequestExceptionUnauthorized("This account id is unauthorized");
         } else if (account == null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_ID_NOT_EXIST,
                     "Account id: " + account_id + " does not exist.");
