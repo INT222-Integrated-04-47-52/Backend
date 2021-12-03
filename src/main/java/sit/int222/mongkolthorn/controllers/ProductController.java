@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int222.mongkolthorn.exceptions.ApiRequestException;
+import sit.int222.mongkolthorn.exceptions.ApiRequestExceptionNotFound;
 import sit.int222.mongkolthorn.exceptions.ExceptionResponse;
 import sit.int222.mongkolthorn.exceptions.ProductException;
 import sit.int222.mongkolthorn.models.Product;
@@ -48,7 +49,7 @@ public class ProductController {
         } else return productRepository.getOne(product_id);
     }
 
-    @PostMapping("/admin/addProduct")
+    @PostMapping(value = "/admin/addProduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Product addProduct(@RequestPart Product newProduct) {
         Product newProductId = productRepository.findById(newProduct.getProductId()).orElse(null);
         Product newProductName = productRepository.findByName(newProduct.getName());
@@ -77,7 +78,7 @@ public class ProductController {
         return productRepository.save(newProduct);
     }
 
-    @PostMapping(value = "/admin/addProduct/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/admin/addProduct/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public Product addProductWithImage
             (@RequestParam(value = "image", required = false) MultipartFile imageFile, @RequestPart Product newProduct) {
         Product newProductId = productRepository.findById(newProduct.getProductId()).orElse(null);
@@ -181,41 +182,40 @@ public class ProductController {
 
     @GetMapping("/search")
     public List<Product> searchProduct(@Param("keyword") String keyword) {
-        if(keyword != null){
-            productRepository.findAllByKeyword(keyword);
-        } else if(productRepository.findAllByKeyword(keyword) == null){
-
+        if(keyword == null || keyword.isEmpty()){
+            throw new ApiRequestException("Keyword search is null");
+        } else if(productRepository.findAllByKeyword(keyword).isEmpty()){
+            throw new ApiRequestExceptionNotFound(keyword + " not found");
         }
-        return productRepository.findAll();
+        return productRepository.findAllByKeyword(keyword);
     }
 
     @GetMapping("/filter/kind")
     public List<Product> filterProductByKind(@Param("kind") String kind) {
-        if(kind == null) {
+        if(kind == null || kind.isEmpty()) {
             throw new ApiRequestException("Product kind name is null");
-        } else if(productRepository.findAllByProductType(kind).isEmpty()){
-            throw new ApiRequestException("Product type: " + kind + " not found");
+        } else if(productRepository.findAllByProductKind(kind).isEmpty()){
+            throw new ApiRequestExceptionNotFound("Product kind: " + kind + " not found");
         }
         return productRepository.findAllByProductKind(kind);
     }
 
     @GetMapping("/filter/type")
     public List<Product> filterProductByType(@Param("type") String type) {
-        if(type == null) {
+        if(type == null || type.isEmpty()) {
             throw new ApiRequestException("Product type name is null");
         } else if(productRepository.findAllByProductType(type).isEmpty()){
-            throw new ApiRequestException("Product type: " + type + " not found");
+            throw new ApiRequestExceptionNotFound("Product type: " + type + " not found");
         }
         return productRepository.findAllByProductType(type);
     }
 
     @GetMapping("/filter/gender")
     public List<Product> filterProductByGender(@Param("gender") String gender) {
-        List<Product> x = productRepository.findAllByProductType(gender);
-        if(gender == null) {
+        if(gender == null || gender.isEmpty()) {
             throw new ApiRequestException("Product gender name is null");
-        } else if(productRepository.findAllByProductType(gender).isEmpty()){
-            throw new ApiRequestException("Product type: " + gender + " not found");
+        } else if(productRepository.findAllByProductGender(gender).isEmpty()){
+            throw new ApiRequestExceptionNotFound("Product gender: " + gender + " not found");
         }
         return productRepository.findAllByProductGender(gender);
     }

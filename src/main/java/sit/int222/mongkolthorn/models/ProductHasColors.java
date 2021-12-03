@@ -12,7 +12,7 @@ public class ProductHasColors {
   @ManyToOne
   @JoinColumn(name = "color_id")
   private Colors colors;
-  @JsonBackReference
+  @JsonBackReference(value = "productColors")
   @ManyToOne
   @JoinColumn(name = "product_id")
   private Product product;

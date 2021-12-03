@@ -25,9 +25,9 @@ public class Product {
   private Type type;
   @OneToMany(mappedBy = "product")
   private List<ProductHasColors> productHasColors;
-  @JsonBackReference
-  @OneToMany(mappedBy = "product")
-  private List<Closet> closet;
+//  @JsonBackReference
+//  @OneToMany(mappedBy = "product")
+//  private List<Closet> closet;
 
   public Product() {
   }
@@ -106,11 +106,11 @@ public class Product {
     this.productHasColors = productHasColors;
   }
 
-  public List<Closet> getCloset() {
-    return closet;
-  }
-
-  public void setCloset(List<Closet> closet) {
-    this.closet = closet;
-  }
+//  public List<Closet> getCloset() {
+//    return closet;
+//  }
+//
+//  public void setCloset(List<Closet> closet) {
+//    this.closet = closet;
+//  }
 }

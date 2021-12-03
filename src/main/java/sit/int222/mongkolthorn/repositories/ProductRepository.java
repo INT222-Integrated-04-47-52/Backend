@@ -22,7 +22,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllByProductKind(String kind);
 
     @Query(value = "SELECT p FROM Product p WHERE p.gender.genderName = ?1")
-    List<Product> findAllByProductGender(String gerder);
+    List<Product> findAllByProductGender(String gender);
 
     @Query(value = "SELECT p FROM Product p WHERE p.type.typeName = ?1")
     List<Product> findAllByProductType(String type);
