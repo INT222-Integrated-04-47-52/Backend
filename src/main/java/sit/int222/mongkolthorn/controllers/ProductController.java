@@ -78,7 +78,7 @@ public class ProductController {
         return productRepository.save(newProduct);
     }
 
-    @PostMapping(value = "/admin/addProduct/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/admin/addProduct/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Product addProductWithImage
             (@RequestParam(value = "image", required = false) MultipartFile imageFile, @RequestPart Product newProduct) {
         Product newProductId = productRepository.findById(newProduct.getProductId()).orElse(null);
@@ -159,9 +159,8 @@ public class ProductController {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_NAME_ALREADY_EXIST,
                     "Can't edit. Product name: " + editProduct.getName() + " already exist.");
         } else if (imageFile == null) {
-//            throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_IMAGE_NULL,
-//                    "Can't add. Product id: " + editProduct.getProductId() + " is no image.");
-            editProduct.setImage(storageService.store(imageFile, productId.getProductId()));
+            throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_IMAGE_NULL,
+                    "Can't add. Product id: " + editProduct.getProductId() + " is no image.");
         }
         storageService.delete(productId.getImage());
         editProduct.setImage(storageService.store(imageFile, editProduct.getProductId()));

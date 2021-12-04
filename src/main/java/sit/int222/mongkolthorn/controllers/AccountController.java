@@ -187,7 +187,7 @@ public class AccountController {
         String oldPassword = findAccountId.getPassword();
         Long authoAccountId = TokenSecurityUtil.getCurrentAccountId();
         if (!authoAccountId.equals(editAccount.getAccountId())) {
-            throw new ApiRequestException("This account id is unauthorized");
+            throw new ApiRequestExceptionUnauthorized("This account id is unauthorized");
         } else if (findEmail != null && findAccountId.getAccountId() != findEmail.getAccountId()) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_EMAIL_ALREADY_EXIST,
                     "Can't edit. Email: " + editAccount.getEmail() + " already exist.");
