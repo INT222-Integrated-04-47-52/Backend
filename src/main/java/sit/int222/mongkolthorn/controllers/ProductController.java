@@ -125,7 +125,7 @@ public class ProductController {
         productRepository.deleteById(product_id);
     }
 
-    @PutMapping("/admin/editProduct")
+    @PutMapping(value = "/admin/editProduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Product editProduct(@RequestPart Product editProduct) {
         Product productId = productRepository.findById(editProduct.getProductId()).orElse(null);
         Product productName = productRepository.findByName(editProduct.getName());
@@ -148,7 +148,7 @@ public class ProductController {
         return productRepository.save(editProduct);
     }
 
-    @PutMapping("/admin/editProduct/image")
+    @PutMapping(value = "/admin/editProduct/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Product editProductWithImage(@RequestParam(value = "image", required = false) MultipartFile imageFile, @RequestPart Product editProduct) {
         Product productId = productRepository.findById(editProduct.getProductId()).orElse(null);
         Product productName = productRepository.findByName(editProduct.getName());
