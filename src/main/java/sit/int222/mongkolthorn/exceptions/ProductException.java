@@ -1,6 +1,7 @@
 package sit.int222.mongkolthorn.exceptions;
 
 public class ProductException extends RuntimeException{
+
     ExceptionResponse.ERROR_CODE errorCode;
 
     public ProductException(ExceptionResponse.ERROR_CODE errorCode, String message) {
@@ -9,6 +10,6 @@ public class ProductException extends RuntimeException{
     }
 
     public ExceptionResponse.ERROR_CODE getErrorCode() {
-        return errorCode;
+        return this.errorCode;
     }
 }

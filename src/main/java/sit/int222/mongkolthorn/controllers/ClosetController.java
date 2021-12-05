@@ -97,7 +97,7 @@ public class ClosetController {
         }
 //        else if ((newCloset.getPickUpDate() - currentDate) > 0) {
 //
-//        }
+//
         else {
             Closet newClosetNosize = new Closet();
             newClosetNosize.setClosetId(newCloset.getClosetId());

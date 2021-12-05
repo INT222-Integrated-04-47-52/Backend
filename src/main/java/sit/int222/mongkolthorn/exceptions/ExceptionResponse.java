@@ -16,7 +16,7 @@ public class ExceptionResponse {
 
         private int errorValue;
 
-        ERROR_CODE(int value){
+        ERROR_CODE(int errorValue){
             this.errorValue = errorValue;
         }
     }
@@ -28,6 +28,30 @@ public class ExceptionResponse {
     public ExceptionResponse(ERROR_CODE errorCode, String message, LocalDateTime dateTime) {
         this.errorCode = errorCode;
         this.message = message;
+        this.dateTime = dateTime;
+    }
+
+    public ERROR_CODE getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(ERROR_CODE errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
 }
