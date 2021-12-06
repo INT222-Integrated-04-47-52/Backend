@@ -148,7 +148,6 @@ public class ProductController {
             newProductHasColors.setProduct(editProduct);
             productHasColorsRepository.save(newProductHasColors);
         }
-//        editProduct.setImage(storageService.store((MultipartFile) storageService.loadAsResource(productId.getImage().toString()), editProduct.getProductId()));
         return productRepository.save(editProduct);
     }
 
@@ -159,27 +158,37 @@ public class ProductController {
         if (productId == null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_DOES_NOT_EXIST,
                     "Can't edit. Product id: " + editProduct.getProductId() + " does not exist.");
+        } else if (editProduct.getName().isEmpty()) {
+            throw new ApiRequestException("Can't edit. Product name is empty");
         } else if (productName != null && editProduct.getProductId() != productName.getProductId()) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_NAME_ALREADY_EXIST,
                     "Can't edit. Product name: " + editProduct.getName() + " already exist.");
-        } else if (imageFile == null) {
+        }
+        if (imageFile == null) {
             editProduct.setImage(productId.getImage());
         } else {
             storageService.delete(productId.getImage());
             editProduct.setImage(storageService.store(imageFile, editProduct.getProductId()));
         }
+        if (editProduct.getDescription().isEmpty()) {
+            throw new ApiRequestException("Can't edit. Product description is empty");
+        }
+        if (editProduct.getProductHasColors().isEmpty()) {
+            throw new ApiRequestException("Can't edit. Color is empty");
+        } else {
             List<ProductHasColors> beforeEditProduct = productId.getProductHasColors();
             for (ProductHasColors productHasColors : beforeEditProduct) {
                 productHasColorsRepository.deleteById(productHasColors.getHasColorsId());
             }
-            Product productNoColor = new Product(editProduct.getProductId(), editProduct.getName(), editProduct.getImage()
+        }
+        Product productNoColor = new Product(editProduct.getProductId(), editProduct.getName(), editProduct.getImage()
                     , editProduct.getDescription(), editProduct.getKind(), editProduct.getGender(), editProduct.getType());
-            productRepository.save(productNoColor);
-            List<ProductHasColors> productHasColors = editProduct.getProductHasColors();
-            for (ProductHasColors newProductHasColors : productHasColors) {
-                newProductHasColors.setProduct(editProduct);
-                productHasColorsRepository.save(newProductHasColors);
-            }
+        productRepository.save(productNoColor);
+        List<ProductHasColors> productHasColors = editProduct.getProductHasColors();
+        for (ProductHasColors newProductHasColors : productHasColors) {
+            newProductHasColors.setProduct(editProduct);
+            productHasColorsRepository.save(newProductHasColors);
+        }
         return productRepository.save(editProduct);
     }
 
