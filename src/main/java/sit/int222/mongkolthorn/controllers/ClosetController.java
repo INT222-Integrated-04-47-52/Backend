@@ -75,19 +75,19 @@ public class ClosetController {
     @PostMapping("/user/addCloset")
     public Closet addCloset(@RequestPart Closet newCloset) {
         Closet findClosetId = closetRepository.findById(newCloset.getClosetId()).orElse(null);
-        Account findAccountId = accountRepository.findById(newCloset.getAccount().getAccountId()).orElse(null);
+//        Account findAccountId = accountRepository.findById(newCloset.getAccount().getAccountId()).orElse(null);
         Product findProductId = productRepository.findById(newCloset.getProduct().getProductId()).orElse(null);
         Colors findColorId = colorsRepository.findById(newCloset.getColor().getColorId()).orElse(null);
         storageService.loadAsResource(newCloset.getProduct().getImage());
         long millis = System.currentTimeMillis();
         java.sql.Date currentDate = new java.sql.Date(millis);
 
-        if (findClosetId != null) {
+        Long authoAccountId = TokenSecurityUtil.getCurrentAccountId();
+        if (!authoAccountId.equals(newCloset.getAccount().getAccountId())) {
+            throw new ApiRequestExceptionUnauthorized("This account id is unauthorized");
+        } else if (findClosetId != null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.CLOSET_ID_EXIST,
                     "Can't add. Closet id: " + newCloset.getClosetId() + " already exist.");
-        } else if (findAccountId == null) {
-            throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_DOES_NOT_EXIST,
-                    "Can't add. Account id: " + newCloset.getAccount().getAccountId() + " does not exist");
         } else if (findProductId == null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_DOES_NOT_EXIST,
                     "Can't add. Product id: " + newCloset.getProduct().getProductId() + " does not exist");

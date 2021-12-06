@@ -176,7 +176,6 @@ public class AccountController {
         editAccount.setPhone(requestAccount.getPhone());
         editAccount.setEmail(requestAccount.getEmail());
         editAccount.setPassword(requestAccount.getPassword());
-        editAccount.setRole(requestAccount.getRole());
 
         Account findAccountId = accountRepository.findById(editAccount.getAccountId()).orElse(null);
         Account findEmail = accountRepository.findByEmail(editAccount.getEmail());
@@ -184,6 +183,8 @@ public class AccountController {
             throw new ProductException(ExceptionResponse.ERROR_CODE.ACCOUNT_ID_NOT_EXIST,
                     "Can't edit. Account id: " + editAccount.getAccountId() + " does not exist.");
         }
+        editAccount.setRole(findAccountId.getRole());
+
         String oldPassword = findAccountId.getPassword();
         Long authoAccountId = TokenSecurityUtil.getCurrentAccountId();
         if (!authoAccountId.equals(editAccount.getAccountId())) {
