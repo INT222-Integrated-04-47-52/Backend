@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
+import sit.int222.mongkolthorn.exceptions.ApiRequestExceptionNotFound;
 import sit.int222.mongkolthorn.models.ImageDetail;
 import sit.int222.mongkolthorn.services.StorageService;
 
@@ -55,6 +56,9 @@ public class ImageController {
 
     @GetMapping(value = "/image/{imageName}", produces = MediaType.IMAGE_PNG_VALUE)
     public Resource showImage(@PathVariable String imageName) {
+//        if(!storageService.loadAsResource(imageName).exists()) {
+//            throw new ApiRequestExceptionNotFound("Image not found");
+//        } else
         return storageService.loadAsResource(imageName);
     }
 }

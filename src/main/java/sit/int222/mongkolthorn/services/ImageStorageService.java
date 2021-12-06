@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import sit.int222.mongkolthorn.exceptions.ApiRequestExceptionNotFound;
 import sit.int222.mongkolthorn.exceptions.StorageException;
 
 import java.io.IOException;
@@ -80,7 +81,7 @@ public class ImageStorageService implements StorageService{
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             } else {
-                throw new RuntimeException("Image name dose not exist");
+                throw new ApiRequestExceptionNotFound("Image name not found");
             }
         } catch (MalformedURLException e) {
             throw new RuntimeException("FAIL!");

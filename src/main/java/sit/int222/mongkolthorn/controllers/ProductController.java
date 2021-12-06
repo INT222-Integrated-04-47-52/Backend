@@ -16,6 +16,7 @@ import sit.int222.mongkolthorn.models.Product;
 import sit.int222.mongkolthorn.models.ProductHasColors;
 import sit.int222.mongkolthorn.repositories.ProductHasColorsRepository;
 import sit.int222.mongkolthorn.repositories.ProductRepository;
+import sit.int222.mongkolthorn.services.ImageStorageService;
 import sit.int222.mongkolthorn.services.StorageService;
 
 import java.util.ArrayList;
@@ -29,6 +30,8 @@ public class ProductController {
     private ProductHasColorsRepository productHasColorsRepository;
     @Autowired
     StorageService storageService;
+    @Autowired
+    ImageStorageService imageStorageService;
 
     @GetMapping("/allProducts")
     public List<Product> product() {
@@ -145,6 +148,7 @@ public class ProductController {
             newProductHasColors.setProduct(editProduct);
             productHasColorsRepository.save(newProductHasColors);
         }
+//        editProduct.setImage(storageService.store((MultipartFile) storageService.loadAsResource(productId.getImage().toString()), editProduct.getProductId()));
         return productRepository.save(editProduct);
     }
 
@@ -159,23 +163,23 @@ public class ProductController {
             throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_NAME_ALREADY_EXIST,
                     "Can't edit. Product name: " + editProduct.getName() + " already exist.");
         } else if (imageFile == null) {
-            throw new ProductException(ExceptionResponse.ERROR_CODE.PRODUCT_IMAGE_NULL,
-                    "Can't add. Product id: " + editProduct.getProductId() + " is no image.");
+            editProduct.setImage(productId.getImage());
+        } else {
+            storageService.delete(productId.getImage());
+            editProduct.setImage(storageService.store(imageFile, editProduct.getProductId()));
         }
-        storageService.delete(productId.getImage());
-        editProduct.setImage(storageService.store(imageFile, editProduct.getProductId()));
-        List<ProductHasColors> beforeEditProduct = productId.getProductHasColors();
-        for (ProductHasColors productHasColors : beforeEditProduct) {
-            productHasColorsRepository.deleteById(productHasColors.getHasColorsId());
-        }
-        Product productNoColor = new Product(editProduct.getProductId(),editProduct.getName(),editProduct.getImage()
-                ,editProduct.getDescription(),editProduct.getKind(),editProduct.getGender(),editProduct.getType());
-        productRepository.save(productNoColor);
-        List<ProductHasColors> productHasColors = editProduct.getProductHasColors();
-        for (ProductHasColors newProductHasColors : productHasColors) {
-            newProductHasColors.setProduct(editProduct);
-            productHasColorsRepository.save(newProductHasColors);
-        }
+            List<ProductHasColors> beforeEditProduct = productId.getProductHasColors();
+            for (ProductHasColors productHasColors : beforeEditProduct) {
+                productHasColorsRepository.deleteById(productHasColors.getHasColorsId());
+            }
+            Product productNoColor = new Product(editProduct.getProductId(), editProduct.getName(), editProduct.getImage()
+                    , editProduct.getDescription(), editProduct.getKind(), editProduct.getGender(), editProduct.getType());
+            productRepository.save(productNoColor);
+            List<ProductHasColors> productHasColors = editProduct.getProductHasColors();
+            for (ProductHasColors newProductHasColors : productHasColors) {
+                newProductHasColors.setProduct(editProduct);
+                productHasColorsRepository.save(newProductHasColors);
+            }
         return productRepository.save(editProduct);
     }
 
