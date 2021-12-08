@@ -3,6 +3,7 @@ package sit.int222.mongkolthorn.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import sit.int222.mongkolthorn.config.TokenSecurityUtil;
+import sit.int222.mongkolthorn.exceptions.ApiRequestException;
 import sit.int222.mongkolthorn.exceptions.ApiRequestExceptionUnauthorized;
 import sit.int222.mongkolthorn.exceptions.ExceptionResponse;
 import sit.int222.mongkolthorn.exceptions.ProductException;
@@ -78,8 +79,11 @@ public class ClosetController {
         Account findAccountId = accountRepository.findById(newCloset.getAccount().getAccountId()).orElse(null);
         Product findProductId = productRepository.findById(newCloset.getProduct().getProductId()).orElse(null);
         Colors findColorId = colorsRepository.findById(newCloset.getColor().getColorId()).orElse(null);
-//        long millis = System.currentTimeMillis();
-//        java.sql.Date currentDate = new java.sql.Date(millis);
+
+        Date pickUp = newCloset.getPickUpDate();
+        LocalDate pickUpDate = LocalDate.parse(pickUp.toString());
+        LocalDate currentDate = LocalDate.now();
+        int differentDay = Period.between(currentDate,pickUpDate).getDays();
 
         Long authoAccountId = TokenSecurityUtil.getCurrentAccountId();
         if (!authoAccountId.equals(newCloset.getAccount().getAccountId())) {
@@ -93,8 +97,12 @@ public class ClosetController {
         } else if (findColorId == null) {
             throw new ProductException(ExceptionResponse.ERROR_CODE.COLOR_DOES_NOT_EXIST,
                     "Can't add. Color id: " + newCloset.getColor().getColorId() + " does not exist");
-        }
-        else {
+        } else if (differentDay <= 0) {
+            throw new ApiRequestException("Pick-Up date need more than current date");
+        } else if (differentDay < 15) {
+            throw new ApiRequestException("Pick-Up date need more than 15 days");
+        } else
+        {
             Closet newClosetNosize = new Closet();
             newClosetNosize.setClosetId(newCloset.getClosetId());
             newClosetNosize.setAccount(findAccountId);
