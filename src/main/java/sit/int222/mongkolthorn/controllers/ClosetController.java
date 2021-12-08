@@ -32,9 +32,6 @@ public class ClosetController {
     @Autowired
     private SizeRepository sizeRepository;
 
-    @Autowired
-    private StorageService storageService;
-
     @GetMapping("/admin/allClosets")
     public List<Closet> closet(){
         return closetRepository.findAll();
@@ -75,12 +72,11 @@ public class ClosetController {
     @PostMapping("/user/addCloset")
     public Closet addCloset(@RequestPart Closet newCloset) {
         Closet findClosetId = closetRepository.findById(newCloset.getClosetId()).orElse(null);
-//        Account findAccountId = accountRepository.findById(newCloset.getAccount().getAccountId()).orElse(null);
+        Account findAccountId = accountRepository.findById(newCloset.getAccount().getAccountId()).orElse(null);
         Product findProductId = productRepository.findById(newCloset.getProduct().getProductId()).orElse(null);
         Colors findColorId = colorsRepository.findById(newCloset.getColor().getColorId()).orElse(null);
-        storageService.loadAsResource(newCloset.getProduct().getImage());
-        long millis = System.currentTimeMillis();
-        java.sql.Date currentDate = new java.sql.Date(millis);
+//        long millis = System.currentTimeMillis();
+//        java.sql.Date currentDate = new java.sql.Date(millis);
 
         Long authoAccountId = TokenSecurityUtil.getCurrentAccountId();
         if (!authoAccountId.equals(newCloset.getAccount().getAccountId())) {
@@ -101,9 +97,9 @@ public class ClosetController {
         else {
             Closet newClosetNosize = new Closet();
             newClosetNosize.setClosetId(newCloset.getClosetId());
-            newClosetNosize.setAccount(newCloset.getAccount());
-            newClosetNosize.setProduct(newCloset.getProduct());
-            newClosetNosize.setColor(newCloset.getColor());
+            newClosetNosize.setAccount(findAccountId);
+            newClosetNosize.setProduct(findProductId);
+            newClosetNosize.setColor(findColorId);
             newClosetNosize.setPickUpDate(newCloset.getPickUpDate());
             closetRepository.save(newClosetNosize);
             List<Size> newSizesList = newCloset.getSize();
@@ -114,4 +110,18 @@ public class ClosetController {
         }
         return closetRepository.save(newCloset);
     }
+
+//    @DeleteMapping("/admin/delete/{closet_id}")
+//    public void deleteProduct(@PathVariable Long closet_id) {
+//        Closet closet = closetRepository.findById(closet_id).orElse(null);
+//        if (closet == null) {
+//            throw new ProductException(ExceptionResponse.ERROR_CODE.CLOSET_ID_DOS_NOT_EXIST,
+//                    "Can't delete. Closet id: " + closet_id + " does not exist.");
+//        }
+//        List<Size> sizesList = closet.getSize();
+//        for (Size size : sizesList) {
+//            sizeRepository.deleteById(size.getSizeId());
+//        }
+//        productRepository.deleteById(closet_id);
+//    }
 }
