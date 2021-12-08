@@ -3,16 +3,19 @@ package sit.int222.mongkolthorn.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import sit.int222.mongkolthorn.config.TokenSecurityUtil;
-import sit.int222.mongkolthorn.exceptions.ApiRequestException;
 import sit.int222.mongkolthorn.exceptions.ApiRequestExceptionUnauthorized;
 import sit.int222.mongkolthorn.exceptions.ExceptionResponse;
 import sit.int222.mongkolthorn.exceptions.ProductException;
 import sit.int222.mongkolthorn.models.*;
 import sit.int222.mongkolthorn.repositories.*;
-import sit.int222.mongkolthorn.services.StorageService;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 @RestController
@@ -91,9 +94,6 @@ public class ClosetController {
             throw new ProductException(ExceptionResponse.ERROR_CODE.COLOR_DOES_NOT_EXIST,
                     "Can't add. Color id: " + newCloset.getColor().getColorId() + " does not exist");
         }
-//        else if ((newCloset.getPickUpDate() - currentDate) > 0) {
-//
-//
         else {
             Closet newClosetNosize = new Closet();
             newClosetNosize.setClosetId(newCloset.getClosetId());
@@ -111,17 +111,17 @@ public class ClosetController {
         return closetRepository.save(newCloset);
     }
 
-//    @DeleteMapping("/admin/delete/{closet_id}")
-//    public void deleteProduct(@PathVariable Long closet_id) {
-//        Closet closet = closetRepository.findById(closet_id).orElse(null);
-//        if (closet == null) {
-//            throw new ProductException(ExceptionResponse.ERROR_CODE.CLOSET_ID_DOS_NOT_EXIST,
-//                    "Can't delete. Closet id: " + closet_id + " does not exist.");
-//        }
-//        List<Size> sizesList = closet.getSize();
-//        for (Size size : sizesList) {
-//            sizeRepository.deleteById(size.getSizeId());
-//        }
-//        productRepository.deleteById(closet_id);
-//    }
+    @DeleteMapping("/admin/delete/closet/{closet_id}")
+    public void deleteCloset(@PathVariable Long closet_id) {
+        Closet closet = closetRepository.findById(closet_id).orElse(null);
+        if (closet == null) {
+            throw new ProductException(ExceptionResponse.ERROR_CODE.CLOSET_ID_DOS_NOT_EXIST,
+                    "Can't delete. Closet id: " + closet_id + " does not exist.");
+        }
+        List<Size> sizesList = closet.getSize();
+        for (Size size : sizesList) {
+            sizeRepository.deleteById(size.getSizeId());
+        }
+        closetRepository.deleteById(closet_id);
+    }
 }
